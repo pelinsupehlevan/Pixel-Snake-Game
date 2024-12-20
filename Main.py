@@ -1,4 +1,4 @@
-from tkinter import Tk
-from model import *
-from view import View
-from controller import Controller
+from controller.Controller import Controller
+
+if __name__ == "__main__":
+    Controller()
