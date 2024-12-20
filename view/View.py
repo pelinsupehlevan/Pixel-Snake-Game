@@ -55,4 +55,4 @@ class View:
                                 font=('consolas', 70), text="GAME OVER", fill="red", tag="gameover")
 
         Button(self.window, text="Return to Menu", font=('consolas', 20),
-               command=on_menu_callback).place(x=self.canvas.winfo_width() / 2 - 100, y=self.canvas.winfo_height() / 2 + 15d0)
+               command=on_menu_callback).place(x=self.canvas.winfo_width() / 2 - 100, y=self.canvas.winfo_height() / 2 + 150)
