@@ -8,7 +8,8 @@ class View:
         self.window.title("Snake Game")
         self.window.resizable(False, False)
 
-        self.score_label = Label(self.window, text="Score: 0", font=('consolas', 40))
+        # Skor etiketi
+        self.score_label = Label(self.window, text="Score: 0 | Highscore: 0", font=('consolas', 20))
         self.score_label.pack()
 
         self.canvas = Canvas(self.window, bg="black", height=self.controller.GAME_HEIGHT, width=self.controller.GAME_WIDTH)
@@ -30,20 +31,28 @@ class View:
         self.window.bind('<Up>', lambda event: self.controller.change_direction('up'))
         self.window.bind('<Down>', lambda event: self.controller.change_direction('down'))
 
+    def update_score(self, score, high_score):
+        """Skor ve yüksek skoru güncelle."""
+        self.score_label.config(text=f"Score: {score} | Highscore: {high_score}")
+
+    def clear_canvas(self):
+        """Oyun alanını temizle."""
+        self.canvas.delete(ALL)
+
     def draw_snake(self, snake):
+        """Yılanı çiz."""
         for x, y in snake.coordinates:
             self.canvas.create_rectangle(x, y, x + self.controller.SPACE_SIZE, y + self.controller.SPACE_SIZE, fill="#00FF00", tag="snake")
 
     def draw_food(self, food):
+        """Yiyeceği çiz."""
         x, y = food.coordinates
         self.canvas.create_oval(x, y, x + self.controller.SPACE_SIZE, y + self.controller.SPACE_SIZE, fill="#FF0000", tag="food")
 
-    def update_score(self, score):
-        self.score_label.config(text=f"Score: {score}")
-
-    def clear_canvas(self):
-        self.canvas.delete(ALL)
-
-    def show_game_over(self):
+    def show_game_over(self, on_menu_callback):
+        """GAME OVER ekranını göster."""
         self.canvas.create_text(self.canvas.winfo_width() / 2, self.canvas.winfo_height() / 2,
                                 font=('consolas', 70), text="GAME OVER", fill="red", tag="gameover")
+
+        Button(self.window, text="Return to Menu", font=('consolas', 20),
+               command=on_menu_callback).place(x=self.canvas.winfo_width() / 2 - 100, y=self.canvas.winfo_height() / 2 + 15d0)
