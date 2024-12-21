@@ -16,6 +16,7 @@ class View:
         self.canvas.pack()
 
         self.window.update()
+        self.window.bind('<Escape>', lambda event: self.controller.toggle_pause())
 
         window_width = self.window.winfo_width()
         window_height = self.window.winfo_height()
@@ -49,6 +50,8 @@ class View:
         x, y = food.coordinates
         self.canvas.create_oval(x, y, x + self.controller.SPACE_SIZE, y + self.controller.SPACE_SIZE, fill="#FF0000", tag="food")
 
+        
+
     def show_game_over(self, on_menu_callback):
         """GAME OVER ekranını göster."""
         self.canvas.create_text(self.canvas.winfo_width() / 2, self.canvas.winfo_height() / 2,
@@ -56,3 +59,24 @@ class View:
 
         Button(self.window, text="Return to Menu", font=('consolas', 20),
                command=on_menu_callback).place(x=self.canvas.winfo_width() / 2 - 100, y=self.canvas.winfo_height() / 2 + 150)
+        
+    def show_pause_menu(self, resume_callback, restart_callback, return_to_menu_callback):
+        """Display the pause menu."""
+        self.pause_overlay = Frame(self.window, bg="black")
+        self.pause_overlay.place(relx=0.5, rely=0.5, anchor="center")
+
+        Label(self.pause_overlay, text="PAUSED", font=("consolas", 50), fg="yellow", bg="black").pack(pady=20)
+
+        Button(self.pause_overlay, text="Resume", font=("consolas", 20), command=resume_callback).pack(pady=10)
+        Button(self.pause_overlay, text="Restart", font=("consolas", 20), command=restart_callback).pack(pady=10)
+        Button(self.pause_overlay, text="Return to Menu", font=("consolas", 20), command=return_to_menu_callback).pack(pady=10)
+
+    def hide_pause_menu(self):
+        """Remove the pause menu."""
+        self.pause_overlay.destroy()
+
+
+    def hide_pause_menu(self):
+        """Pause menüsünü gizle."""
+        self.pause_overlay.destroy()
+
