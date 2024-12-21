@@ -39,7 +39,7 @@ class Controller:
         self.reset_game_variables() 
         self.snake = Snake() 
         self.food = Food()
-        self.view = View(self)  
+        self.view = View(self, self.menu)  
 
         self.view.update_score(self.score, self.high_score)
 
@@ -126,16 +126,28 @@ class Controller:
         self.next_turn() 
     
     def restart_game(self):
+        if hasattr(self.menu, "stop_music"):
+            self.menu.stop_music()
+
+        difficulty_music = {
+        150: "easy",
+        100: "medium",
+        50: "hard"
+    }
+        
+        if hasattr(self.menu, "play_music"):
+            self.menu.play_music(difficulty_music.get(self.SPEED, "medium"))
+        
         self.view.window.destroy() 
         self.paused = False  
         self.start_game()  
+        
 
     def return_to_menu(self):
         self.view.window.destroy()  
         self.paused = False 
         self.root = tk.Tk()
-        self.menu = Menu(self.root, self.start_game_from_menu)
-        self.root.mainloop()
+        self.menu = Menu(self.root, self.start_game_from_menu, self.high_score)
 
 
 if __name__ == "__main__":
