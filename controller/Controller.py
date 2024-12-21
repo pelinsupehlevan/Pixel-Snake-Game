@@ -73,7 +73,7 @@ class Controller:
 
         if self.check_collisions():
             self.view.clear_canvas()
-            self.view.show_game_over(self.return_to_menu)
+            self.view.show_game_over(self.return_to_menu, self.restart_game)
         else:
             self.view.clear_canvas()
             self.view.draw_snake(self.snake)

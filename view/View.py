@@ -52,13 +52,20 @@ class View:
 
         
 
-    def show_game_over(self, on_menu_callback):
+    def show_game_over(self, on_menu_callback, restart_game_callback):
         """GAME OVER ekranını göster."""
-        self.canvas.create_text(self.canvas.winfo_width() / 2, self.canvas.winfo_height() / 2,
-                                font=('consolas', 70), text="GAME OVER", fill="red", tag="gameover")
-
-        Button(self.window, text="Return to Menu", font=('consolas', 20),
-               command=on_menu_callback).place(x=self.canvas.winfo_width() / 2 - 100, y=self.canvas.winfo_height() / 2 + 150)
+        self.canvas.create_text(self.canvas.winfo_width() / 2, self.canvas.winfo_height() / 2 - 100,
+                                font=('consolas', 50), text="GAME OVER", fill="red", tag="gameover")
+        
+        
+        button_spacing = 88
+        
+        
+        Button(self.window, text="Return to Menu", font=('consolas', 20),width=15,
+               command=on_menu_callback).place(relx=0.5, rely=0.5, anchor="center", y=button_spacing)
+        
+        Button(self.window, text="Restart", font=('consolas', 20),width=15,
+               command=restart_game_callback).place(relx=0.5, rely=0.5, anchor="center", y=0)
         
     def show_pause_menu(self, resume_callback, restart_callback, return_to_menu_callback):
         """Display the pause menu."""
