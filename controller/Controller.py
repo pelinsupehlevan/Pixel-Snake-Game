@@ -2,6 +2,8 @@ from model.Snake import Snake
 from model.Food import Food
 from view.View import View, GAME_WIDTH, GAME_HEIGHT, SPACE_SIZE
 from view.Menu import Menu
+import tkinter as tk
+
 
 
 class Controller:
@@ -11,13 +13,27 @@ class Controller:
         self.SPACE_SIZE = SPACE_SIZE
         self.SPEED = 100  
         self.score = 0
-        self.high_score = 0  
+        self.high_score = 0 
         self.direction = 'down'
         self.paused = False
-        self.menu = Menu(self)
+
+        self.root = tk.Tk()
+        self.menu = Menu(self.root, self.start_game_from_menu)
+        self.root.mainloop()
 
     def set_speed(self, speed):
         self.SPEED = speed
+
+    def start_game_from_menu(self, difficulty):
+        if difficulty == "Easy":
+            self.set_speed(150)
+        elif difficulty == "Medium":
+            self.set_speed(100)
+        elif difficulty == "Hard":
+            self.set_speed(50)
+
+        self.root.destroy()
+        self.start_game()
 
     def start_game(self):
         self.reset_game_variables() 
@@ -35,7 +51,6 @@ class Controller:
         self.view.window.mainloop()
 
     def next_turn(self):
-
         if self.paused: 
             return
         
@@ -63,7 +78,7 @@ class Controller:
         else:
             del self.snake.coordinates[-1]
 
-        if self.check_collisions():
+        if self.check_collisions():        
             self.view.clear_canvas()
             self.view.show_game_over(self.return_to_menu, self.restart_game)
         else:
@@ -104,8 +119,7 @@ class Controller:
             self.view.show_pause_menu(self.resume_game, self.restart_game, self.return_to_menu)
         else:
             self.resume_game()
-
-
+    
     def resume_game(self):
         self.paused = False  
         self.view.hide_pause_menu() 
@@ -116,12 +130,12 @@ class Controller:
         self.paused = False  
         self.start_game()  
 
-
     def return_to_menu(self):
         self.view.window.destroy()  
         self.paused = False 
-        self.menu = Menu(self)  
-
+        self.root = tk.Tk()
+        self.menu = Menu(self.root, self.start_game_from_menu)
+        self.root.mainloop()
 
 
 if __name__ == "__main__":
