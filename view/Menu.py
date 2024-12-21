@@ -7,12 +7,12 @@ import pygame
 
 
 class Menu:
-    def __init__(self, root, start_game_callback):
+    def __init__(self, root, start_game_callback, high_score=0):
         self.root = root
         self.start_game_callback = start_game_callback
         self.menu_frame = None
         self.difficulty_frame = None
-        self.high_score = 0
+        self.high_score = high_score
         self.high_score_label = None
 
         self.setup_window()
@@ -30,9 +30,11 @@ class Menu:
             "menu": "assets/menu_music.mp3",
             "easy": "assets/easy_music.mp3",
             "medium": "assets/medium_music.mp3",
-            "hard": "assets/hard_music.mp3"
+            "hard": "assets/hard_music.mp3",
+            "game_over": "assets/game_over_music.mp3"
         }
         try:
+            pygame.mixer.music.stop()
             pygame.mixer.music.load(music_files[track])
             pygame.mixer.music.play(-1)  # Sonsuz döngüde çal
         except pygame.error as e:
@@ -91,7 +93,7 @@ class Menu:
             fg="black",
             activebackground="#ffe760",
             activeforeground="black",
-            command=lambda: [self.stop_music(), self.root.quit()],
+            command=self.exit_application,
         )
         exit_button.pack(pady=10)
 
@@ -176,6 +178,13 @@ class Menu:
     def clear_frames(self):
         for widget in self.root.winfo_children():
             widget.destroy()
+
+    def exit_application(self):
+    # Stop the music system cleanly
+        pygame.mixer.quit()
+    # Quit the tkinter application immediately
+        self.root.destroy()
+
 
 
 if __name__ == "__main__":

@@ -13,8 +13,9 @@ FOOD_COLOR = "#FF0000"
 BACKGROUND_COLOR = "#000000"
 
 class View:
-    def __init__(self, controller):
+    def __init__(self, controller, menu):
         self.controller = controller
+        self.menu = menu
         self.window = Tk()
         self.window.title("Snake Game")
         self.window.resizable(False, False)
@@ -65,6 +66,10 @@ class View:
 
     def show_game_over(self, on_menu_callback, restart_game_callback):
         
+        if self.menu:
+            self.menu.stop_music()
+            self.menu.play_music("game_over")
+
         self.canvas.create_text(self.canvas.winfo_width() / 2, self.canvas.winfo_height() / 2 - 100,
                                 font=("Consolas", 50, "bold"), text="GAME OVER", fill="red", tag="gameover")
         
@@ -92,9 +97,6 @@ class View:
                 bd=3,
                 relief="ridge",
                 command=restart_game_callback).place(relx=0.5, rely=0.5, anchor="center", y=0)
-        
-
-
 
         
     def show_pause_menu(self, resume_callback, restart_callback, return_to_menu_callback):
