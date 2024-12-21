@@ -1,6 +1,6 @@
 from model.Snake import Snake
-from model.Food import Food, GAME_WIDTH, GAME_HEIGHT, SPACE_SIZE
-from view.View import View
+from model.Food import Food
+from view.View import View, GAME_WIDTH, GAME_HEIGHT, SPACE_SIZE
 from view.Menu import Menu
 
 
@@ -9,40 +9,36 @@ class Controller:
         self.GAME_WIDTH = GAME_WIDTH
         self.GAME_HEIGHT = GAME_HEIGHT
         self.SPACE_SIZE = SPACE_SIZE
-        self.SPEED = 100  # Varsayılan hız
+        self.SPEED = 100  
         self.score = 0
-        self.high_score = 0  # Oturumdaki yüksek skor
+        self.high_score = 0  
         self.direction = 'down'
-
-        # Menü ekranını başlat
+        self.paused = False
         self.menu = Menu(self)
 
     def set_speed(self, speed):
-        """Zorluk seviyesine göre hızı ayarla."""
         self.SPEED = speed
 
     def start_game(self):
-        """Oyunu başlat ve yeni yılan/yiyecek oluştur."""
-        self.reset_game_variables()  # Değişkenleri sıfırla
-        self.snake = Snake()  # Yeni yılan oluştur
-        self.food = Food()  # Yeni yiyecek oluştur
-        self.view = View(self)  # Oyun ekranını oluştur
+        self.reset_game_variables() 
+        self.snake = Snake() 
+        self.food = Food()
+        self.view = View(self)  
 
-        # Skoru sıfırla ve güncelle
         self.view.update_score(self.score, self.high_score)
 
-        # Yılan ve yiyeceği çizin
         self.view.draw_snake(self.snake)
         self.view.draw_food(self.food)
 
-        # Oyun döngüsünü başlat
         self.next_turn()
 
-        # Pencereyi açık tut
         self.view.window.mainloop()
 
     def next_turn(self):
-        """Oyun döngüsünü yönet."""
+
+        if self.paused: 
+            return
+        
         x, y = self.snake.coordinates[0]
 
         if self.direction == "up":
@@ -69,7 +65,7 @@ class Controller:
 
         if self.check_collisions():
             self.view.clear_canvas()
-            self.view.show_game_over(self.return_to_menu)
+            self.view.show_game_over(self.return_to_menu, self.restart_game)
         else:
             self.view.clear_canvas()
             self.view.draw_snake(self.snake)
@@ -77,7 +73,6 @@ class Controller:
             self.view.window.after(self.SPEED, self.next_turn)
 
     def change_direction(self, new_direction):
-        """Yön değişikliği kontrolü."""
         if new_direction == 'left' and self.direction != 'right':
             self.direction = new_direction
         elif new_direction == 'right' and self.direction != 'left':
@@ -88,7 +83,6 @@ class Controller:
             self.direction = new_direction
 
     def check_collisions(self):
-        """Çarpışma kontrolü."""
         x, y = self.snake.coordinates[0]
 
         if x < 0 or x >= self.GAME_WIDTH or y < 0 or y >= self.GAME_HEIGHT:
@@ -101,14 +95,33 @@ class Controller:
         return False
 
     def reset_game_variables(self):
-        """Oyun değişkenlerini sıfırla."""
         self.score = 0
         self.direction = 'down'
 
+    def toggle_pause(self):
+        if not self.paused:
+            self.paused = True
+            self.view.show_pause_menu(self.resume_game, self.restart_game, self.return_to_menu)
+        else:
+            self.resume_game()
+
+
+    def resume_game(self):
+        self.paused = False  
+        self.view.hide_pause_menu() 
+        self.next_turn() 
+    
+    def restart_game(self):
+        self.view.window.destroy() 
+        self.paused = False  
+        self.start_game()  
+
+
     def return_to_menu(self):
-        """Menü ekranına dön."""
-        self.view.window.destroy()  # Oyun penceresini kapat
-        self.menu = Menu(self)  # Menü ekranını tekrar aç
+        self.view.window.destroy()  
+        self.paused = False 
+        self.menu = Menu(self)  
+
 
 
 if __name__ == "__main__":

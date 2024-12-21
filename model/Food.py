@@ -1,12 +1,5 @@
 import random
-
-GAME_WIDTH = 700
-GAME_HEIGHT = 700
-SPACE_SIZE = 50
-
-
-
-
+from view.View import View, GAME_WIDTH, GAME_HEIGHT, SPACE_SIZE
 
 class Food:
     def __init__(self):
