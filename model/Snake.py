@@ -1,6 +1,4 @@
-
 BODY_PARTS = 3
-
 
 class Snake:
     def __init__(self):
