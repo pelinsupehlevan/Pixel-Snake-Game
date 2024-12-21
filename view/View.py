@@ -20,7 +20,7 @@ class View:
         self.window.resizable(False, False)
 
         
-        self.score_label = Label(self.window, text="Score: 0 | Highscore: 0", font=('consolas', 20))
+        self.score_label = Label(self.window, text="Score: 0 | Highscore: 0", font=('consolas', 20,'bold')  , fg="black")
         self.score_label.pack()
 
         self.canvas = Canvas(self.window, bg="black", height=self.controller.GAME_HEIGHT, width=self.controller.GAME_WIDTH)
@@ -66,17 +66,36 @@ class View:
     def show_game_over(self, on_menu_callback, restart_game_callback):
         
         self.canvas.create_text(self.canvas.winfo_width() / 2, self.canvas.winfo_height() / 2 - 100,
-                                font=('consolas', 50), text="GAME OVER", fill="red", tag="gameover")
+                                font=("Consolas", 50, "bold"), text="GAME OVER", fill="red", tag="gameover")
         
         
         button_spacing = 88
+
+    
         
-        
-        Button(self.window, text="Return to Menu", font=('consolas', 20),width=15,
+        Button(self.window, text="RETURN TO MENU", 
+                font=("Consolas", 20, "bold"),
+                width=15,
+                bg="#ff39d7",
+                fg="white",
+                activebackground="#ff39a9",
+                activeforeground="white",
                command=on_menu_callback).place(relx=0.5, rely=0.5, anchor="center", y=button_spacing)
         
-        Button(self.window, text="Restart", font=('consolas', 20),width=15,
-               command=restart_game_callback).place(relx=0.5, rely=0.5, anchor="center", y=0)
+        Button(self.window, text="RESTART",
+                font=("Consolas", 20, "bold"),
+                width=15,
+                bg="#fdff60",
+                fg="black",
+                activebackground="#ffe760",
+                activeforeground="black",
+                bd=3,
+                relief="ridge",
+                command=restart_game_callback).place(relx=0.5, rely=0.5, anchor="center", y=0)
+        
+
+
+
         
     def show_pause_menu(self, resume_callback, restart_callback, return_to_menu_callback):
         

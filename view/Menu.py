@@ -3,6 +3,7 @@ from model.Food import Food
 from view.View import View, GAME_WIDTH, GAME_HEIGHT, SPACE_SIZE
 from PIL import Image, ImageTk
 import tkinter as tk
+import pygame
 
 
 class Menu:
@@ -16,10 +17,29 @@ class Menu:
 
         self.setup_window()
         self.setup_main_menu()
+        self.play_music("menu")  # Başlangıçta ana menü müziği çalınır
 
     def setup_window(self):
         self.root.geometry(f"{GAME_WIDTH}x{GAME_HEIGHT}")
         self.root.resizable(False, False)
+
+    def play_music(self, track):
+        
+        pygame.mixer.init()
+        music_files = {
+            "menu": "assets/menu_music.mp3",
+            "easy": "assets/easy_music.mp3",
+            "medium": "assets/medium_music.mp3",
+            "hard": "assets/hard_music.mp3"
+        }
+        try:
+            pygame.mixer.music.load(music_files[track])
+            pygame.mixer.music.play(-1)  # Sonsuz döngüde çal
+        except pygame.error as e:
+            print(f"Music for {track} could not be loaded: {e}")
+
+    def stop_music(self):
+        pygame.mixer.music.stop()
 
     def setup_main_menu(self):
         self.clear_frames()
@@ -71,7 +91,7 @@ class Menu:
             fg="black",
             activebackground="#ffe760",
             activeforeground="black",
-            command=self.root.quit,
+            command=lambda: [self.stop_music(), self.root.quit()],
         )
         exit_button.pack(pady=10)
 
@@ -112,7 +132,7 @@ class Menu:
             relief="ridge",
             width=10,
             height=2,
-            command=lambda: self.start_game_callback("Easy"),
+            command=lambda: [self.stop_music(), self.play_music("easy"), self.start_game_callback("Easy")],
         ).pack(pady=10)
 
         # Medium Button
@@ -128,7 +148,7 @@ class Menu:
             relief="ridge",
             width=10,
             height=2,
-            command=lambda: self.start_game_callback("Medium"),
+            command=lambda: [self.stop_music(), self.play_music("medium"), self.start_game_callback("Medium")],
         ).pack(pady=10)
 
         # Hard Button
@@ -144,7 +164,7 @@ class Menu:
             relief="ridge",
             width=10,
             height=2,
-            command=lambda: self.start_game_callback("Hard"),
+            command=lambda: [self.stop_music(), self.play_music("hard"), self.start_game_callback("Hard")],
         ).pack(pady=10)
 
     def update_high_score(self, score):
@@ -156,6 +176,7 @@ class Menu:
     def clear_frames(self):
         for widget in self.root.winfo_children():
             widget.destroy()
+
 
 if __name__ == "__main__":
     root = tk.Tk()
