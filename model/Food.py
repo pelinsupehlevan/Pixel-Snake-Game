@@ -6,4 +6,5 @@ class Food:
         self.coordinates = [
             random.randint(0, int(GAME_WIDTH / SPACE_SIZE) - 1) * SPACE_SIZE,
             random.randint(0, int(GAME_HEIGHT / SPACE_SIZE) - 1) * SPACE_SIZE
+            
         ]
