@@ -13,7 +13,7 @@ class Controller:
         self.score = 0
         self.high_score = 0  # Oturumdaki yüksek skor
         self.direction = 'down'
-
+        self.paused = False
         # Menü ekranını başlat
         self.menu = Menu(self)
 
@@ -43,6 +43,10 @@ class Controller:
 
     def next_turn(self):
         """Oyun döngüsünü yönet."""
+
+        if self.paused:  # Stop the game loop when paused
+            return
+        
         x, y = self.snake.coordinates[0]
 
         if self.direction == "up":
@@ -69,7 +73,7 @@ class Controller:
 
         if self.check_collisions():
             self.view.clear_canvas()
-            self.view.show_game_over(self.return_to_menu)
+            self.view.show_game_over(self.return_to_menu, self.restart_game)
         else:
             self.view.clear_canvas()
             self.view.draw_snake(self.snake)
@@ -105,10 +109,34 @@ class Controller:
         self.score = 0
         self.direction = 'down'
 
+    def toggle_pause(self):
+        """Pause and resume the game."""
+        if not self.paused:
+            self.paused = True
+            self.view.show_pause_menu(self.resume_game, self.restart_game, self.return_to_menu)
+        else:
+            self.resume_game()
+
+
+    def resume_game(self):
+        """Resume the game from the pause menu."""
+        self.paused = False  # Mark the game as unpaused
+        self.view.hide_pause_menu()  # Hide the pause menu
+        self.next_turn()  # Resume the game loop
+    
+    def restart_game(self):
+        """Restart the game."""
+        self.view.window.destroy()  # Close the current game window
+        self.paused = False  # Ensure paused state is reset
+        self.start_game()  # Start a new game session
+
+
     def return_to_menu(self):
-        """Menü ekranına dön."""
-        self.view.window.destroy()  # Oyun penceresini kapat
-        self.menu = Menu(self)  # Menü ekranını tekrar aç
+        """Return to the main menu."""
+        self.view.window.destroy()  # Close the current game window
+        self.paused = False  # Reset the paused state
+        self.menu = Menu(self)  # Recreate the menu
+
 
 
 if __name__ == "__main__":
