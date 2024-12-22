@@ -5,21 +5,22 @@ from view.Menu import Menu
 import tkinter as tk
 
 
-
 class Controller:
-    def __init__(self):
+    def __init__(self, headless=False):
         self.GAME_WIDTH = GAME_WIDTH
         self.GAME_HEIGHT = GAME_HEIGHT
         self.SPACE_SIZE = SPACE_SIZE
-        self.SPEED = 100  
+        self.SPEED = 100
         self.score = 0
-        self.high_score = 0 
+        self.high_score = 0
         self.direction = 'down'
         self.paused = False
+        self.headless = headless
 
-        self.root = tk.Tk()
-        self.menu = Menu(self.root, self.start_game_from_menu)
-        self.root.mainloop()
+        if not self.headless:
+            self.root = tk.Tk()
+            self.menu = Menu(self.root, self.start_game_from_menu)
+            self.root.mainloop()
 
     def set_speed(self, speed):
         self.SPEED = speed
@@ -32,28 +33,30 @@ class Controller:
         elif difficulty == "Hard":
             self.set_speed(50)
 
-        self.root.destroy()
+        if not self.headless:
+            self.root.destroy()
         self.start_game()
 
     def start_game(self):
-        self.reset_game_variables() 
-        self.snake = Snake() 
+        self.reset_game_variables()
+        self.snake = Snake()
         self.food = Food()
-        self.view = View(self, self.menu)  
+        if not self.headless:
+            self.view = View(self, self.menu)
 
-        self.view.update_score(self.score, self.high_score)
+            self.view.update_score(self.score, self.high_score)
 
-        self.view.draw_snake(self.snake)
-        self.view.draw_food(self.food)
+            self.view.draw_snake(self.snake)
+            self.view.draw_food(self.food)
 
-        self.next_turn()
+            self.next_turn()
 
-        self.view.window.mainloop()
+            self.view.window.mainloop()
 
     def next_turn(self):
-        if self.paused: 
+        if self.paused:
             return
-        
+
         x, y = self.snake.coordinates[0]
 
         if self.direction == "up":
@@ -72,20 +75,24 @@ class Controller:
             if self.score > self.high_score:
                 self.high_score = self.score
 
-            self.view.update_score(self.score, self.high_score)
+            if not self.headless:
+                self.view.update_score(self.score, self.high_score)
             self.food = Food()
-            self.view.draw_food(self.food)
+            if not self.headless:
+                self.view.draw_food(self.food)
         else:
             del self.snake.coordinates[-1]
 
-        if self.check_collisions():        
-            self.view.clear_canvas()
-            self.view.show_game_over(self.return_to_menu, self.restart_game)
+        if self.check_collisions():
+            if not self.headless:
+                self.view.clear_canvas()
+                self.view.show_game_over(self.return_to_menu, self.restart_game)
         else:
-            self.view.clear_canvas()
-            self.view.draw_snake(self.snake)
-            self.view.draw_food(self.food)
-            self.view.window.after(self.SPEED, self.next_turn)
+            if not self.headless:
+                self.view.clear_canvas()
+                self.view.draw_snake(self.snake)
+                self.view.draw_food(self.food)
+                self.view.window.after(self.SPEED, self.next_turn)
 
     def change_direction(self, new_direction):
         if new_direction == 'left' and self.direction != 'right':
@@ -116,38 +123,43 @@ class Controller:
     def toggle_pause(self):
         if not self.paused:
             self.paused = True
-            self.view.show_pause_menu(self.resume_game, self.restart_game, self.return_to_menu)
+            if not self.headless:
+                self.view.show_pause_menu(self.resume_game, self.restart_game, self.return_to_menu)
         else:
             self.resume_game()
-    
+
     def resume_game(self):
-        self.paused = False  
-        self.view.hide_pause_menu() 
-        self.next_turn() 
-    
+        self.paused = False
+        if not self.headless:
+            self.view.hide_pause_menu()
+        self.next_turn()
+
     def restart_game(self):
-        if hasattr(self.menu, "stop_music"):
+        if not self.headless and hasattr(self.menu, "stop_music"):
             self.menu.stop_music()
 
         difficulty_music = {
-        150: "easy",
-        100: "medium",
-        50: "hard"
-    }
-        
-        if hasattr(self.menu, "play_music"):
+            150: "easy",
+            100: "medium",
+            50: "hard"
+        }
+
+        if not self.headless and hasattr(self.menu, "play_music"):
             self.menu.play_music(difficulty_music.get(self.SPEED, "medium"))
-        
-        self.view.window.destroy() 
-        self.paused = False  
-        self.start_game()  
-        
+
+        if not self.headless and hasattr(self.view, "window"):
+            self.view.window.destroy()
+
+        self.paused = False
+        self.start_game()
 
     def return_to_menu(self):
-        self.view.window.destroy()  
-        self.paused = False 
-        self.root = tk.Tk()
-        self.menu = Menu(self.root, self.start_game_from_menu, self.high_score)
+        if not self.headless:
+            self.view.window.destroy()
+        self.paused = False
+        if not self.headless:
+            self.root = tk.Tk()
+            self.menu = Menu(self.root, self.start_game_from_menu, self.high_score)
 
 
 if __name__ == "__main__":
